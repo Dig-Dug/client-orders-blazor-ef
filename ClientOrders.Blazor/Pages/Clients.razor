@@ -18,6 +18,7 @@ else
         {
             <li>
                 @c.Name
+                <button @onclick="() => DeleteClient(c.Id)">Delete</button>
                 <ul>
                     @foreach (var o in c.Orders)
                     {
@@ -36,4 +37,18 @@ else
     {
         clients = Context.Clients.Include(c => c.Orders).ToList();
     }
+
+    private async Task DeleteClient(int id)
+    {
+        var client = await Context.Clients.FindAsync(id);
+        if (client is null)
+            return;
+
+        Context.Clients.Remove(client);
+        await Context.SaveChangesAsync();
+
+        clients?.Remove(client); // update UI
+    }
 }
+
+

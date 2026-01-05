@@ -1,0 +1,34 @@
+﻿@page "/clients/create"
+@using ClientOrders.Core
+@using ClientOrders.Infrastructure
+@inject AppDbContext Db
+@inject NavigationManager Nav
+
+<PageTitle>New Client</PageTitle>
+
+<h3>Create Client</h3>
+
+<EditForm Model="_client" OnValidSubmit="Save">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div>
+        <label>Name</label><br />
+        <InputText @bind-Value="_client.Name" />
+    </div>
+
+    <br />
+
+    <button type="submit">Save</button>
+</EditForm>
+
+@code {
+    private Client _client = new();
+
+    private async Task Save()
+    {
+        Db.Clients.Add(_client);
+        await Db.SaveChangesAsync();
+        Nav.NavigateTo("/clients-table");
+    }
+}
