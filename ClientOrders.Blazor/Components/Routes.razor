@@ -1,0 +1,53 @@
+﻿<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+@using ClientOrders.Core
+@using ClientOrders.Infrastructure
+@using Microsoft.EntityFrameworkCore
+
+@page "/clients-table"
+@inject ClientOrders.Infrastructure.AppDbContext Db
+
+<h3>Clients</h3>
+
+@if (clients == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in clients)
+            {
+                <tr>
+                    <td>@c.Id</td>
+                    <td>@c.Name</td>
+                  
+                </tr>
+
+            }
+            <!--  <td>@c.Email</td> -->
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Client>? clients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clients = await Db.Clients.ToListAsync();
+    }
+}
+

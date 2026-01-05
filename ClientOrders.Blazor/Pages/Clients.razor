@@ -1,0 +1,39 @@
+﻿@page "/clients"
+@using ClientOrders.Infrastructure
+@using ClientOrders.Core
+@inject AppDbContext Context
+@using Microsoft.EntityFrameworkCore
+
+
+<h3>Clients</h3>
+
+@if (clients == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var c in clients)
+        {
+            <li>
+                @c.Name
+                <ul>
+                    @foreach (var o in c.Orders)
+                    {
+                        <li>@o.Description</li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<Client>? clients;
+
+    protected override void OnInitialized()
+    {
+        clients = Context.Clients.Include(c => c.Orders).ToList();
+    }
+}
