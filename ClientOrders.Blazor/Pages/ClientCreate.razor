@@ -20,15 +20,26 @@
     <br />
 
     <button type="submit">Save</button>
+    <button @onclick="Cancel">Cancel</button>
 </EditForm>
 
 @code {
     private Client _client = new();
+    private string? error;
 
     private async Task Save()
     {
+        if (string.IsNullOrWhiteSpace(_client.Name))
+        {
+            error = "Client name is required.";
+            return;
+        }
         Db.Clients.Add(_client);
         await Db.SaveChangesAsync();
-        Nav.NavigateTo("/clients-table");
+        Nav.NavigateTo("/clients");
+    }
+    private void Cancel()
+    {
+        Nav.NavigateTo("/clients");
     }
 }

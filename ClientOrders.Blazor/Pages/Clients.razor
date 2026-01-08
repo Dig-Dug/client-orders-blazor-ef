@@ -3,10 +3,13 @@
 @using ClientOrders.Core
 @inject AppDbContext Context
 @using Microsoft.EntityFrameworkCore
+@inject IJSRuntime JS
+@inject NavigationManager Nav
 
 
+
+<button @onclick="GoToCreate">Create</button>
 <h3>Clients</h3>
-
 @if (clients == null)
 {
     <p>Loading...</p>
@@ -18,7 +21,15 @@ else
         {
             <li>
                 @c.Name
-                <button @onclick="() => DeleteClient(c.Id)">Delete</button>
+     <!--           <button @onclick="() => DeleteClient(c.Id)">Delete</button>-->
+    
+     
+     <button @onclick ="()=> ConfirmDelete(c.Id)">
+         Delete
+     </button>
+                <button @onclick="() => EditClient(c.Id)">
+                    Edit
+                </button>
                 <ul>
                     @foreach (var o in c.Orders)
                     {
@@ -49,6 +60,29 @@ else
 
         clients?.Remove(client); // update UI
     }
+
+    private async Task ConfirmDelete(int id)
+    {
+        var confirmed = await JS.InvokeAsync<bool>(
+            "confirm",
+            "Are you sure you want to delete this client?"
+        );
+
+        if (confirmed)
+        {
+            await DeleteClient(id);
+        }
+    }
+    private void EditClient(int id)
+    {
+        Nav.NavigateTo("/clients/edit/" + id);
+    }
+
+    private void GoToCreate()
+    {
+        Nav.NavigateTo("/clients/create");
+    }
+
 }
 
 

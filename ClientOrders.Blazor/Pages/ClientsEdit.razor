@@ -1,0 +1,55 @@
+﻿@page "/clients/edit/{Id:int}"
+@using ClientOrders.Core
+@using ClientOrders.Infrastructure
+@inject AppDbContext Context
+@inject NavigationManager Nav
+
+<h3>ClientsEdit</h3>
+
+@if(client == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <input  @bind="client.Name"/>
+    
+    <br/>
+    @if (!string.IsNullOrWhiteSpace(error))
+    {
+        <p style="color:red">@error</p>
+    }
+    <button @onclick="Save" disabled="@IsIivalid">Save</button>
+    <button @onclick="Cancel">Cancel</button>
+}
+
+@code {
+    private string? error;
+
+    private bool IsIivalid => string.IsNullOrWhiteSpace(client?.Name);
+    [Parameter]
+    public int Id { get; set; }
+    private Client? client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = await Context.Clients.FindAsync(Id);
+    }
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(client?.Name))
+        {
+            error = "Client name is required.";
+            return;
+        }
+        error = null;
+        await Context.SaveChangesAsync();
+        Nav.NavigateTo("/client");
+    }
+    private void Cancel()
+    {
+        Nav.NavigateTo("/clients");
+    }
+
+
+}
