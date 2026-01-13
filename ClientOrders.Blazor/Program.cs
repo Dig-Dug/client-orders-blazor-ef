@@ -1,7 +1,7 @@
 ﻿using ClientOrders.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Web;
-
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         "Server=(localdb)\\MSSQLLocalDB;Database=ClientOrdersDb;Trusted_Connection=True;"
     )
 );
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

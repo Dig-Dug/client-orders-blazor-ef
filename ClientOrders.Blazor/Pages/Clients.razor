@@ -1,124 +1,71 @@
 ﻿@page "/clients"
-@using ClientOrders.Infrastructure
-@using ClientOrders.Core
 @inject AppDbContext Context
-@using Microsoft.EntityFrameworkCore
-@inject IJSRuntime JS
 @inject NavigationManager Nav
+@inject IJSRuntime JS
+@using Microsoft.EntityFrameworkCore
+@using ClientOrders.Core
+
+<MudText Typo="Typo.h4" Class="mb-4">Clients</MudText>
+<MudButton Variant="Variant.Filled"
+             Color="Color.Primary"
+             StartIcon="@Icons.Material.Filled.Add"
+             OnClick="@(()=> Nav.NavigateTo("/clients/create"))"
+>
+Create Client
+</MudButton>
+
+<MudTable Items="clients" Class="mt-4" Hover="true" Dense="true">
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Orders</MudTh>
+        <MudTh></MudTh>
+
+    </HeaderContent>
+
+
+<RowTemplate>
+    <MudTh>@context.Name</MudTh>
+    <MudTh>@context.Orders.Count</MudTh>
+    <MudTh Align="Align.right">
+        <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                       Color="Color.Primary"
+                       OnClick="@(()=> Nav.NavigateTo($"clients/edit/{context.Id}"))"
+        />
+            <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                           Color="Color.Error"
+                           OnClick="@(() => ConfirmDelete(context.Id))" />
+
+
+    </MudTh>
+</RowTemplate>
+
+</MudTable>
 
 
 
-<button @onclick="GoToCreate">Create</button>
-<h3>Clients</h3>
-@if (clients == null)
-{
-    <p>Loading...</p>
-}
-else
-{
-    <ul>
-        @foreach (var c in clients)
-        {
-            <li>
-                @c.Name
-     <!--           <button @onclick="() => DeleteClient(c.Id)">Delete</button>-->
-    
-     
-     <button @onclick ="()=> ConfirmDelete(c.Id)">
-         Delete
-     </button>
-                <button @onclick="() => EditClient(c.Id)">
-                    Edit
-                </button>
-                <ul>
-                    @foreach (var o in c.Orders)
-                    {
-                        <li>@o.Description</li>
-                    }
-                </ul>
-            </li>
-        }
-    </ul> 
-   
-    
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Orders</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var c in clients)
-            {
-                <tr>
-                    <td>@c.Name</td>
-                    <td>
-                        <ul>
-                            @foreach(var o in c.Orders)
-                            {
-                                <li>@o.Description</li>
-                            }
-                        </ul>
-                    </td>
-                    <td>
-                        <button @onclick="() => EditClient(c.Id)">Edit</button>
-                        <button @onclick="() => ConfirmDelete(c.Id)">Delete</button>
-                    </td>
-                </tr>
-
-
-            }
-        </tbody>
-
-
-
-    </table>
-}
-
-@code {
-    private List<Client>? clients;
+@code{
+    private List<Client> clients = new();
 
     protected override void OnInitialized()
     {
-        clients = Context.Clients.Include(c => c.Orders).ToList();
+        clients = Context.Clients
+            .Include(c => c.Orders)
+            .ToList();
     }
+    private async Task ConfirmDelete(int id){
+        var confirmed = await JS.InvokeAsync<bool>(
+            "confirm", "Delete this client?"
+        );
+        if (!confirmed)
+            return;
 
-    private async Task DeleteClient(int id)
-    {
         var client = await Context.Clients.FindAsync(id);
         if (client is null)
             return;
 
-        Context.Clients.Remove(client);
-        await Context.SaveChangesAsync();
-
-        clients?.Remove(client); // update UI
-    }
-
-    private async Task ConfirmDelete(int id)
-    {
-        var confirmed = await JS.InvokeAsync<bool>(
-            "confirm",
-            "Are you sure you want to delete this client?"
-        );
-
-        if (confirmed)
-        {
-            await DeleteClient(id);
-        }
-    }
-    private void EditClient(int id)
-    {
-        Nav.NavigateTo("/clients/edit/" + id);
-    }
-
-    private void GoToCreate()
-    {
-        Nav.NavigateTo("/clients/create");
+            Context.Clients.Remove(client);
+            await Context.SaveChangesAsync();
+            clients.Remove(client);
     }
 
 }
-
-

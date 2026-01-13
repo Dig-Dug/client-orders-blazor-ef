@@ -23,7 +23,7 @@
 @using Microsoft.AspNetCore.Components.Routing
 @using ClientOrders.Blazor.Components.Layout
 
-<Router AppAssembly="@typeof(App).Assembly">
+<!--<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData"
                    DefaultLayout="@typeof(MainLayout)" />
@@ -33,6 +33,28 @@
             <p>Sorry, nothing here.</p>
         </LayoutView>
     </NotFound>
-</Router>
+</Router>-->
+<CarcadingAuthenticationState>
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudText Typo="Typo.h6">Client Orders Manager</MudText>
+    </MudAppBar>
+
+<MudMainContent>
+    <Router AppAssembly="@typeof(App).Assembly">
+                <Found Context="routeData">
+                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                </Found>
+        <NotFound>
+            <MudText>Page not found</MudText>
+        </NotFound>
+    </Router>
+</MudMainContent>
+</MudLayout>
+</CarcadingAuthenticationState>
 
 
