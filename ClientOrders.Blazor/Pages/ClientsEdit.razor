@@ -3,6 +3,7 @@
 @using ClientOrders.Infrastructure
 @inject AppDbContext Context
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
 <h3>ClientsEdit</h3>
 
@@ -12,19 +13,78 @@
 }
 else
 {
-    <input  @bind="client.Name"/>
+   
+    <MudTextField @bind-Value="client.Name"
+       Label ="Client Name"
+    Required="true"
+    Immediate="true"
+    class="mb-4" />
+    
+
+        
+        
     
     <br/>
     @if (!string.IsNullOrWhiteSpace(error))
     {
         <p style="color:red">@error</p>
     }
-    <button @onclick="Save" disabled="@IsIivalid">Save</button>
-    <button @onclick="Cancel">Cancel</button>
+    
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled="@IsIivalid">
+        Save
+    </MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="Cancel" Class ="ml-2">
+        Cancel
+    </MudButton> 
+    
+    <h4>Orders</h4>
+
+    <MudTextField @bind-Value="newOrderTitle"
+    Label ="Order Title"
+    Required="true"
+    Class="mb-2"
+    />
+
+    <MudTextField  @bind-Value="newOrderDescription"
+    Label="Order Description"
+    Required="true"
+    Class="mb-2"
+    />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddOrder">
+        Add Order
+    </MudButton>
+
+    @if (client.Orders.Any())
+    {
+    <MudTable Items="client.Orders" Hover="true" Danse="true" Class="mt-2">
+        <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Description</MudTh>
+        <MudTh>Created At</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+            <MudTd>@context.Title</MudTd>
+            <MudTd>@context.Description</MudTd>
+            <MudTd>@context.CreatedAt.ToString("g")</MudTd>
+
+            <MudTd Align="Align.Right">
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                Color="Color.Error"
+                OnClick="@(()=> ConfirmDeleteOrder(context))"/>
+            </MudTd>
+            </RowTemplate>
+    </MudTable>
+    }
+    else
+    {
+        <p>No orders yet.</p>
+    }
 }
 
 @code {
     private string? error;
+    private string newOrderTitle = string.Empty;
+    private string newOrderDescription = string.Empty;
 
     private bool IsIivalid => string.IsNullOrWhiteSpace(client?.Name);
     [Parameter]
@@ -33,7 +93,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        client = await Context.Clients.FindAsync(Id);
+        //client = await Context.Clients.FindAsync(Id);
+        client = await Context.Clients
+        .Include(c => c.Orders)
+        .FirstOrDefaultAsync(c => c.Id == Id);
     }
     private async Task Save()
     {
@@ -51,5 +114,33 @@ else
         Nav.NavigateTo("/clients");
     }
 
+
+
+    private async Task AddOrder()
+    {
+        if(client is null || string.IsNullOrWhiteSpace(newOrderTitle))
+            return;
+        client.Orders.Add(new Order
+            {
+                Title = newOrderTitle,
+                Description = newOrderDescription,
+                CreatedAt = DateTime.Now
+            });
+
+        await Context.SaveChangesAsync();
+        newOrderTitle = string.Empty;
+        newOrderDescription = string.Empty;
+    }
+    private async Task ConfirmDeleteOrder(Order order)
+    {
+        if (order == null)
+            return;
+        var confirmed = await JS.InvokeAsync<bool>("confirm", $"Delete order '{order.Title}'?");
+        if (!confirmed) return;
+
+        client?.Orders.Remove(order);
+        Context.Orders.Remove(order);
+        await Context.SaveChangesAsync();
+    }
 
 }

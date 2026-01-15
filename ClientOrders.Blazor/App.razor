@@ -1,60 +1,26 @@
-﻿<!--
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <base href="/" />
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="ClientOrders.Blazor.styles.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <HeadOutlet />
-</head>
-
-<body>
-    <Routes />
-    <script src="_framework/blazor.web.js"></script>
-</body>
-
-</html>
--->
-@using Microsoft.AspNetCore.Components.Routing
+﻿@using Microsoft.AspNetCore.Components.Routing
 @using ClientOrders.Blazor.Components.Layout
 
-<!--<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData"
-                   DefaultLayout="@typeof(MainLayout)" />
-    </Found>
-    <NotFound>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p>Sorry, nothing here.</p>
-        </LayoutView>
-    </NotFound>
-</Router>-->
-<CarcadingAuthenticationState>
-<MudThemeProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<CascadingAuthenticationState>
+    <MudThemeProvider />
+    <MudDialogProvider />
+    <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudText Typo="Typo.h6">Client Orders Manager</MudText>
-    </MudAppBar>
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <MudText Typo="Typo.h6">Client Orders Manager</MudText>
+        </MudAppBar>
 
-<MudMainContent>
-    <Router AppAssembly="@typeof(App).Assembly">
+        <MudMainContent>
+            <Router AppAssembly="@typeof(App).Assembly">
                 <Found Context="routeData">
-                    <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+                    <RouteView RouteData="@routeData"
+                               DefaultLayout="@typeof(MainLayout)" />
                 </Found>
-        <NotFound>
-            <MudText>Page not found</MudText>
-        </NotFound>
-    </Router>
-</MudMainContent>
-</MudLayout>
-</CarcadingAuthenticationState>
-
-
+                <NotFound>
+                    <MudText>Page not found</MudText>
+                </NotFound>
+            </Router>
+        </MudMainContent>
+    </MudLayout>
+</CascadingAuthenticationState>
