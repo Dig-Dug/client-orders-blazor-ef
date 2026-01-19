@@ -4,6 +4,7 @@
 @inject AppDbContext Context
 @inject NavigationManager Nav
 @inject IJSRuntime JS
+@inject ISnackbar Snackbar
 
 <h3>ClientsEdit</h3>
 
@@ -50,7 +51,10 @@ else
     Required="true"
     Class="mb-2"
     />
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddOrder">
+    <MudButton Variant="Variant.Filled" 
+    Color="Color.Primary"
+    Disabled="@string.IsNullOrWhiteSpace(newOrderTitle)"
+    OnClick="AddOrder">
         Add Order
     </MudButton>
 
@@ -77,7 +81,10 @@ else
     }
     else
     {
-        <p>No orders yet.</p>
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+            This client has no orders yer. Add one above
+
+        </MudAlert>
     }
 }
 
@@ -107,6 +114,7 @@ else
         }
         error = null;
         await Context.SaveChangesAsync();
+        Snackbar.Add("Client saved", Severity.Success);
         Nav.NavigateTo("/clients");
     }
     private void Cancel()
@@ -128,6 +136,7 @@ else
             });
 
         await Context.SaveChangesAsync();
+        Snackbar.Add("Order added", Severity.Success);
         newOrderTitle = string.Empty;
         newOrderDescription = string.Empty;
     }
@@ -141,6 +150,7 @@ else
         client?.Orders.Remove(order);
         Context.Orders.Remove(order);
         await Context.SaveChangesAsync();
+        Snackbar.Add("Order deleted", Severity.Info);
     }
 
 }
