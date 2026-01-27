@@ -3,8 +3,10 @@
 @using ClientOrders.Infrastructure
 @inject AppDbContext Context
 @inject NavigationManager Nav
-@inject IJSRuntime JS
+
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
 
 <h3>ClientsEdit</h3>
 
@@ -140,7 +142,10 @@ else
         newOrderTitle = string.Empty;
         newOrderDescription = string.Empty;
     }
-    private async Task ConfirmDeleteOrder(Order order)
+   /*
+     * @inject IJSRuntime JS
+    * 
+    *  private async Task ConfirmDeleteOrder(Order order)
     {
         if (order == null)
             return;
@@ -150,7 +155,28 @@ else
         client?.Orders.Remove(order);
         Context.Orders.Remove(order);
         await Context.SaveChangesAsync();
+    Snackbar.Add("Order deleted", Severity.Info);
+    }
+   */
+    private async Task ConfirmDeleteOrder(Order order)
+    {
+        var parameters = new DialogParameters
+        {
+            ["ContentText"] = $"Delete Order '{order.Title}'?"
+        };
+
+        var dialog = DialogService.Show<ConfirmDialog>(
+            "Confirm delete",
+            parameters);
+
+        var result = await dialog.Result;
+
+        if (result.Canceled)
+            return;
+
+        client?.Orders.Remove(order);
+        Context.Orders.Remove(order);
+        await Context.SaveChangesAsync();
         Snackbar.Add("Order deleted", Severity.Info);
     }
-
 }
