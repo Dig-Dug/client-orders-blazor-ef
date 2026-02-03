@@ -22,9 +22,9 @@ else
     Required="true"
     Immediate="true"
     class="mb-4" />
-    
 
-        
+
+    
         
     
     <br/>
@@ -32,7 +32,8 @@ else
     {
         <p style="color:red">@error</p>
     }
-    
+   
+
     <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Save" Disabled="@IsIivalid">
         Save
     </MudButton>
@@ -53,6 +54,15 @@ else
     Required="true"
     Class="mb-2"
     />
+
+    <MudTextField Label="Order Image URL"
+                  @bind-Value="newOrderImageUrl"
+                  Placeholder="https://..."
+                  Variant="Variant.Outlined"
+                  FullWidth="true"
+                  Class="mb-2" />
+
+
     <MudButton Variant="Variant.Filled" 
     Color="Color.Primary"
     Disabled="@string.IsNullOrWhiteSpace(newOrderTitle)"
@@ -73,6 +83,13 @@ else
             <MudTd>@context.Description</MudTd>
             <MudTd>@context.CreatedAt.ToString("g")</MudTd>
 
+
+                <MudTd>
+                    @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
+                    {
+                        <MudImage Src="@context.ImageUrl" Alt="Order Image" Width="100" />
+                    }
+                </MudTd>
             <MudTd Align="Align.Right">
                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
                 Color="Color.Error"
@@ -94,6 +111,7 @@ else
     private string? error;
     private string newOrderTitle = string.Empty;
     private string newOrderDescription = string.Empty;
+    private string newOrderImageUrl = string.Empty;
 
     private bool IsIivalid => string.IsNullOrWhiteSpace(client?.Name);
     [Parameter]
@@ -134,6 +152,7 @@ else
             {
                 Title = newOrderTitle,
                 Description = newOrderDescription,
+                ImageUrl = newOrderImageUrl,
                 CreatedAt = DateTime.Now
             });
 
@@ -141,6 +160,7 @@ else
         Snackbar.Add("Order added", Severity.Success);
         newOrderTitle = string.Empty;
         newOrderDescription = string.Empty;
+        newOrderImageUrl = string.Empty;
     }
    /*
      * @inject IJSRuntime JS
