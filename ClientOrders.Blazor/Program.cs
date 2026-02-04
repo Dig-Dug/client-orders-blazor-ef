@@ -27,6 +27,12 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 app.UseRouting();
 
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/clients");
+    return Task.CompletedTask;
+});
+
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

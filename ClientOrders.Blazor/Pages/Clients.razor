@@ -16,6 +16,7 @@ Create Client
 
 <MudTable Items="clients" Class="mt-4" Hover="true" Dense="true">
     <HeaderContent>
+        <MudTh>Image</MudTh>
         <MudTh>Name</MudTh>
         <MudTh>Orders</MudTh>
         <MudTh></MudTh>
@@ -24,6 +25,13 @@ Create Client
 
 
 <RowTemplate>
+    <MudTh>
+            @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
+            {
+                <MudAvatar Image="@context.ImageUrl" Size="Size.Medium"/>
+            }
+
+    </MudTh>
     <MudTh>@context.Name</MudTh>
     <MudTh>@context.Orders.Count</MudTh>
     <MudTh Align="Align.right">

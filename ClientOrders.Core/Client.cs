@@ -6,5 +6,7 @@
         public string Name { get; set; } = string.Empty;
 
         public List<Order> Orders { get; set; } = new();
+
+        public string? ImageUrl { get; set; }
     }
 }

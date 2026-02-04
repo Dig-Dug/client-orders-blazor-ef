@@ -54,7 +54,7 @@ else
     Required="true"
     Class="mb-2"
     />
-
+    <InputFile OnChange="OnImageSelected" accept="image/*" />
     <MudTextField Label="Order Image URL"
                   @bind-Value="newOrderImageUrl"
                   Placeholder="https://..."
@@ -112,6 +112,7 @@ else
     private string newOrderTitle = string.Empty;
     private string newOrderDescription = string.Empty;
     private string newOrderImageUrl = string.Empty;
+    private IBrowserFile? uploadedImage;
 
     private bool IsIivalid => string.IsNullOrWhiteSpace(client?.Name);
     [Parameter]
@@ -148,21 +149,47 @@ else
     {
         if(client is null || string.IsNullOrWhiteSpace(newOrderTitle))
             return;
+
+        string? imageUrl = newOrderImageUrl;
+        if(uploadedImage != null)
+        {
+            var uploads = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/uploads/orders"
+            );
+            Directory.CreateDirectory(uploads);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(uploadedImage.Name)}";
+            var filePath = Path.Combine(uploads, fileName);
+            await using var fs = new FileStream(filePath, FileMode.Create);
+            await uploadedImage.OpenReadStream(5_000_000).CopyToAsync(fs);
+            imageUrl = $"/uploads/orders/{fileName}";
+
+        }
         client.Orders.Add(new Order
             {
                 Title = newOrderTitle,
                 Description = newOrderDescription,
-                ImageUrl = newOrderImageUrl,
+            //ImageUrl = newOrderImageUrl,
+                ImageUrl = imageUrl,
                 CreatedAt = DateTime.Now
             });
 
         await Context.SaveChangesAsync();
-        Snackbar.Add("Order added", Severity.Success);
+
+        uploadedImage = null;
         newOrderTitle = string.Empty;
         newOrderDescription = string.Empty;
         newOrderImageUrl = string.Empty;
+
+        Snackbar.Add("Order added", Severity.Success);
     }
-   /*
+
+    private void OnImageSelected(InputFileChangeEventArgs e)
+    {
+        uploadedImage = e.File;
+    }
+    /*
      * @inject IJSRuntime JS
     * 
     *  private async Task ConfirmDeleteOrder(Order order)

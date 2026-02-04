@@ -4,6 +4,7 @@
 @inject AppDbContext Db
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
+@inject IWebHostEnvironment Env
 
 <MudPaper Class="pa-6 mx-auto" MaxWidth="400px" Elevation="4">
     <MudText Typo="Typo.h5" Class="mb-4">Create Client</MudText>
@@ -27,12 +28,17 @@
         OnClick="Cancel"
         >Cancel</MudButton>
 
+        <InputFile OnChange="OnClientImageSelected" accept="image/*" />
+
+      
+
     </MudStack>
 </MudPaper>
 
 @code {
     private Client _client = new();
     private string? error;
+    private IBrowserFile? clientImage;
 
     private async Task Save()
     {
@@ -41,13 +47,41 @@
             error = "Client name is required.";
             return;
         }
+
+        if (clientImage != null)
+        {
+            var uploadsPath = Path.Combine(
+                Env.WebRootPath,
+                "uploads",
+                "clients"
+            );
+
+            Directory.CreateDirectory(uploadsPath);
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(clientImage.Name)}";
+            var filePath = Path.Combine(uploadsPath, fileName);
+
+            await using var stream = new FileStream(filePath, FileMode.Create);
+            await clientImage.OpenReadStream(maxAllowedSize: 5_000_000).CopyToAsync(stream);
+            _client.ImageUrl = $"uploads/clients/{fileName}";
+            
+        }
+  
+        
         Db.Clients.Add(_client);
         await Db.SaveChangesAsync();
         Snackbar.Add("Client created", Severity.Success);
         Nav.NavigateTo("/clients");
     }
+
+    private void OnClientImageSelected(InputFileChangeEventArgs e)
+    {
+        clientImage = e.File;   
+    }
+
     private void Cancel()
     {
         Nav.NavigateTo("/clients");
     }
 }
+
+

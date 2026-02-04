@@ -17,4 +17,8 @@
     <ProjectReference Include="..\ClientOrders.Infrastructure\ClientOrders.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\uploads\clients\" />
+  </ItemGroup>
+
 </Project>
