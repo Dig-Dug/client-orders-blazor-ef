@@ -8,5 +8,7 @@
         public List<Order> Orders { get; set; } = new();
 
         public string? ImageUrl { get; set; }
+
+      //  public string? Description { get; set; }
     }
 }

@@ -25,13 +25,20 @@ Create Client
 
 
 <RowTemplate>
-    <MudTh>
+    <MudTd>
             @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
             {
-                <MudAvatar Image="@context.ImageUrl" Size="Size.Medium"/>
+                <!--<MudAvatar Image="@context.ImageUrl" Size="Size.Medium"/>-->
+
+                <!--<img src="@context.ImageUrl" width="80"/>-->
+                <MudAvatar Size="Size.Large">
+                    <MudImage Src="@context.ImageUrl" 
+                    Alt="Client Image"
+                    ObjectFit="ObjectFit.Cover"/>
+                    </MudAvatar>
             }
 
-    </MudTh>
+    </MudTd>
     <MudTh>@context.Name</MudTh>
     <MudTh>@context.Orders.Count</MudTh>
     <MudTh Align="Align.right">

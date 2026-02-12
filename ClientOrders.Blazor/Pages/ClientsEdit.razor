@@ -23,6 +23,8 @@ else
     Immediate="true"
     class="mb-4" />
 
+    <InputFile OnChange="OnImageChanged" accept="image/*"/>
+
 
     
         
@@ -113,6 +115,7 @@ else
     private string newOrderDescription = string.Empty;
     private string newOrderImageUrl = string.Empty;
     private IBrowserFile? uploadedImage;
+    private IBrowserFile? newImage;
 
     private bool IsIivalid => string.IsNullOrWhiteSpace(client?.Name);
     [Parameter]
@@ -134,6 +137,33 @@ else
             return;
         }
         error = null;
+
+        if(newImage != null)
+        {
+            var uploads = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "wwwroot/uploads/clients"
+            );
+            Directory.CreateDirectory(uploads);
+
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(newImage.Name)}";
+            var filePath = Path.Combine(uploads, fileName);
+
+            await using var fs = new FileStream(filePath, FileMode.Create);
+            await newImage.OpenReadStream(5_000_000).CopyToAsync(fs);
+
+            if (!string.IsNullOrWhiteSpace(client?.ImageUrl))
+            {
+                var oldPath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "wwwroot",
+                    client.ImageUrl.TrimStart('/')
+                );
+                if (File.Exists(oldPath))
+                    File.Delete(oldPath);
+            }
+            client!.ImageUrl = $"/uploads/clients/{fileName}";
+        }
         await Context.SaveChangesAsync();
         Snackbar.Add("Client saved", Severity.Success);
         Nav.NavigateTo("/clients");
@@ -188,6 +218,10 @@ else
     private void OnImageSelected(InputFileChangeEventArgs e)
     {
         uploadedImage = e.File;
+    }
+    private void OnImageChanged(InputFileChangeEventArgs e)
+    {
+        newImage = e.File;
     }
     /*
      * @inject IJSRuntime JS
