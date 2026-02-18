@@ -23,6 +23,14 @@ else
     Immediate="true"
     class="mb-4" />
 
+    <MudTextField @bind-Value="client.Description"
+    Label="Description"
+    Lines="3"
+    Variant="Variant.Outlined"
+        FullWidth="true"
+        Class="mt-4"
+        />
+
     <InputFile OnChange="OnImageChanged" accept="image/*"/>
 
 

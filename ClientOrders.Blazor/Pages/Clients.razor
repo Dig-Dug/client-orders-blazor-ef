@@ -5,7 +5,15 @@
 @using Microsoft.EntityFrameworkCore
 @using ClientOrders.Core
 
-<MudText Typo="Typo.h4" Class="mb-4">Clients</MudText>
+<!--<MudText Typo="Typo.h4" Class="mb-4">Clients</MudText>-->
+
+<!--
+     Client Description + Hover  <--done
+     Search <-- done
+     Sortable columns (name, orders count)
+     Extract FileStorageService
+     Dashboard (total clients, orders,Orders this month Simple MudChart)
+-->
 <MudButton Variant="Variant.Filled"
              Color="Color.Primary"
              StartIcon="@Icons.Material.Filled.Add"
@@ -14,7 +22,14 @@
 Create Client
 </MudButton>
 
-<MudTable Items="clients" Class="mt-4" Hover="true" Dense="true">
+<MudTextField @bind-Value="_searchString"
+              Placeholder="Search clients..."
+              Adornment="Adornment.Start"
+              AdornmentIcon="@Icons.Material.Filled.Search"
+              Class="mb-3" />
+
+
+<MudTable Items="FilteredClients" Class="mt-4" Hover="true" Dense="true">
     <HeaderContent>
         <MudTh>Image</MudTh>
         <MudTh>Name</MudTh>
@@ -25,20 +40,44 @@ Create Client
 
 
 <RowTemplate>
-    <MudTd>
-            @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
-            {
-                <!--<MudAvatar Image="@context.ImageUrl" Size="Size.Medium"/>-->
-
-                <!--<img src="@context.ImageUrl" width="80"/>-->
-                <MudAvatar Size="Size.Large">
-                    <MudImage Src="@context.ImageUrl" 
-                    Alt="Client Image"
-                    ObjectFit="ObjectFit.Cover"/>
+        <MudTd>
+            <MudTooltip>
+                <ChildContent>
+                    <MudAvatar Size="Size.Large" Style="cursor:pointer;">
+                        @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
+                        {
+                            <MudImage Src="@context.ImageUrl"
+                                      ObjectFit="ObjectFit.Cover" />
+                        }
+                        else
+                        {
+                            @context.Name?.Substring(0, 1).ToUpper()
+                        }
                     </MudAvatar>
-            }
+                </ChildContent>
 
-    </MudTd>
+                <TooltipContent>
+                    <MudPaper Class="pa-3" Elevation="4" Style="max-width:250px;">
+                        <MudText Typo="Typo.subtitle1">
+                            @context.Name
+                        </MudText>
+
+                        @if (!string.IsNullOrWhiteSpace(context.Description))
+                        {
+                            <MudText Typo="Typo.body2" Class="mt-1">
+                                @context.Description
+                            </MudText>
+                        }
+
+                        <MudDivider Class="my-2" />
+
+                        <MudText Typo="Typo.caption">
+                            Orders: @context.Orders.Count
+                        </MudText>
+                    </MudPaper>
+                </TooltipContent>
+            </MudTooltip>
+        </MudTd>
     <MudTh>@context.Name</MudTh>
     <MudTh>@context.Orders.Count</MudTh>
     <MudTh Align="Align.right">
@@ -60,6 +99,11 @@ Create Client
 
 @code{
     private List<Client> clients = new();
+    private string _searchString = "";
+    private IEnumerable<Client> FilteredClients =>
+    string.IsNullOrWhiteSpace(_searchString)
+    ? clients : clients.Where(c =>
+    c.Name.Contains(_searchString, StringComparison.OrdinalIgnoreCase));
 
     protected override void OnInitialized()
     {
