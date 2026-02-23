@@ -49,3 +49,14 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.sortable-header {
+    cursor: pointer;
+    user-select: none;
+    transition: 0.2s;
+}
+
+    .sortable-header:hover {
+        color: #1976d2; /* Mud primary blue */
+        transform: translateY(-1px);
+    }
