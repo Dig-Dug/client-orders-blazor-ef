@@ -1,0 +1,51 @@
+﻿@page "/dashboard"
+@inject AppDbContext Context
+@using Microsoft.EntityFrameworkCore
+
+
+
+
+
+
+<h3>Dashboard</h3>
+
+<MudGrid Class="mt-4">
+
+    <MudItem xs="12" sm="4">
+        <MudCard Class="pa-4">
+            <MudText Typo="Typo.h6">Total Clients</MudText>
+            <MudText Typo="Typo.h4">@totalClients</MudText>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCard Class="pa-4">
+            <MudText Typo="Typo.h6">Total Orders</MudText>
+            <MudText Typo="Typo.h4">@totalOrders</MudText>
+        </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+        <MudCard Class="pa-4">
+            <MudText Typo="Typo.h6">Orders This Month</MudText>
+            <MudText Typo="Typo.h4">@ordersThisMonth</MudText>
+        </MudCard>
+    </MudItem>
+
+</MudGrid>
+
+@code {
+    private int totalClients;
+    private int totalOrders;
+    private int ordersThisMonth;
+
+    protected override void OnInitialized()
+    {
+        totalClients = Context.Clients.Count();
+        totalOrders = Context.Orders.Count();
+        var now = DateTime.Now;
+
+        ordersThisMonth = Context.Orders.Count(o => o.CreatedAt.Month == now.Month
+            && o.CreatedAt.Year == now.Year);
+    }
+}

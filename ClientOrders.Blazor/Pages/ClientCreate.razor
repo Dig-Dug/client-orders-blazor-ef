@@ -84,7 +84,7 @@
             await clientImage.OpenReadStream(maxAllowedSize: 5_000_000).CopyToAsync(stream);
             _client.ImageUrl = $"/uploads/clients/{fileName}";
             */
-                                        await using var stream = clientImage.OpenReadStream(5_000_000);
+              await using var stream = clientImage.OpenReadStream(5_000_000);
             _client.ImageUrl = await FileStorage.SaveClientImageAsync(stream, clientImage.Name);
 
         }
