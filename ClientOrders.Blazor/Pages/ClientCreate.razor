@@ -5,6 +5,7 @@
 @inject NavigationManager Nav
 @inject ISnackbar Snackbar
 @inject IWebHostEnvironment Env
+@inject IFileStorageService FileStorage
 
 <MudPaper Class="pa-6 mx-auto" MaxWidth="400px" Elevation="4">
     <MudText Typo="Typo.h5" Class="mb-4">Create Client</MudText>
@@ -79,9 +80,12 @@
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(clientImage.Name)}";
             var filePath = Path.Combine(uploadsPath, fileName);
 
-            await using var stream = new FileStream(filePath, FileMode.Create);
+            /*  await using var stream = new FileStream(filePath, FileMode.Create);
             await clientImage.OpenReadStream(maxAllowedSize: 5_000_000).CopyToAsync(stream);
             _client.ImageUrl = $"/uploads/clients/{fileName}";
+            */
+                                        await using var stream = clientImage.OpenReadStream(5_000_000);
+            _client.ImageUrl = await FileStorage.SaveClientImageAsync(stream, clientImage.Name);
 
         }
 
