@@ -11,6 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
+builder.Services.AddScoped<IDashboardStatsService, DashboardStatsService>();
+
 builder.Services.AddScoped<IFileStorageService>(sp =>
 {
     var env = sp.GetRequiredService<IWebHostEnvironment>();
