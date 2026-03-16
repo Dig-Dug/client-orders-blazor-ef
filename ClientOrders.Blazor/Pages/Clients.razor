@@ -72,6 +72,8 @@ Create Client
     <MudTd>
         <MudTooltip>
             <ChildContent>
+               <div style="cursor:pointer"
+     @onclick="@(() => Nav.NavigateTo($"clients/edit/{context.Id}"))">
                 <MudAvatar Size="Size.Large" Style="cursor:pointer;">
                     @if (!string.IsNullOrWhiteSpace(context.ImageUrl))
                     {
@@ -83,6 +85,7 @@ Create Client
                         @context.Name?.Substring(0, 1).ToUpper()
                     }
                 </MudAvatar>
+                </div>
             </ChildContent>
 
             <TooltipContent>
