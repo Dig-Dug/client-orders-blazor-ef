@@ -2,6 +2,7 @@
 @inject AppDbContext Context
 @using Microsoft.EntityFrameworkCore
 @inject NavigationManager Nav
+@inject IDashboardStatsService DashboardService
 
 
 
@@ -36,21 +37,38 @@
         </MudCard>
     </MudItem>
 
+    <MudItem xs="12">
+        <MudChart ChartType="ChartType.Bar"
+                  Labels="@labels"
+                  Data="@data"
+                  Width="100%"
+                  Height="300px" />
+    </MudItem>
+
 </MudGrid>
 
 @code {
+    private string[] labels = new[] { "Clients", "Orders" };
+    private double[][] data = new double[][]
+    {
+        new double []{0,0}
+    };
     private int totalClients;
     private int totalOrders;
     private int ordersThisMonth;
 
     protected override void OnInitialized()
     {
-        totalClients = Context.Clients.Count();
-        totalOrders = Context.Orders.Count();
-        var now = DateTime.Now;
 
-        ordersThisMonth = Context.Orders.Count(o => o.CreatedAt.Month == now.Month
-            && o.CreatedAt.Year == now.Year);
+
+        var stats = DashboardService.GetStats();
+        totalClients = stats.totalClients;
+        totalOrders = stats.totalOrders;
+        ordersThisMonth = stats.ordersThisMonth;
+        
+
+        data[0][0] = totalClients;
+        data[0][1] = totalOrders;
     }
     private void GoBack()
     {

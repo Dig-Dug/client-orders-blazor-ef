@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface IDashboardStatsService
 {
-    (int totalClients, int totalOrders) GetStats();
+    (int totalClients, int totalOrders, int ordersThisMonth) GetStats();
 }

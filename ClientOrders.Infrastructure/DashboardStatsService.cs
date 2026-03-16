@@ -16,12 +16,15 @@ public class DashboardStatsService : IDashboardStatsService
         _context = context;
     }
 
-    public (int totalClients, int totalOrders) GetStats()
+    public (int totalClients, int totalOrders,int ordersThisMonth) GetStats()
     {
+        var now = DateTime.Now;
         var totalClients = _context.Clients.Count();
         var totalOrders = _context.Orders.Count();
+        var ordersThisMonth = _context.Orders.Count(o => o.CreatedAt.Month == now.Month &&
+        o.CreatedAt.Year == now.Year);      
 
-        return (totalClients, totalOrders);
+        return (totalClients, totalOrders, ordersThisMonth);
     }
 }
 
