@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Components.Web;
 using MudBlazor.Services;
+using ClientOrders.Core;
 
 
 
@@ -18,6 +19,8 @@ builder.Services.AddScoped<IFileStorageService>(sp =>
     var env = sp.GetRequiredService<IWebHostEnvironment>();
     return new FileStorageService(env.WebRootPath);
 });
+
+builder.Services.AddScoped<IClientService, IClientService>();
 // ✅ Register AppDbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(

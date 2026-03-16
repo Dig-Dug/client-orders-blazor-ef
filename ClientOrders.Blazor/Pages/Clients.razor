@@ -4,6 +4,7 @@
 @inject IJSRuntime JS
 @using Microsoft.EntityFrameworkCore
 @using ClientOrders.Core
+@inject IClientService ClientService
 
 <!--<MudText Typo="Typo.h4" Class="mb-4">Clients</MudText>-->
 
@@ -142,9 +143,10 @@ Create Client
     private bool _sortByOrderAsync = true;
     protected override void OnInitialized()
     {
-        clients = Context.Clients
-            .Include(c => c.Orders)
-            .ToList();
+            /*clients = Context.Clients
+                .Include(c => c.Orders)
+                .ToList();*/
+        clients = ClientService.GetClients();
     }
     private async Task ConfirmDelete(int id){
         var confirmed = await JS.InvokeAsync<bool>(
