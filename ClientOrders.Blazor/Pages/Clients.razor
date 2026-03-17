@@ -6,6 +6,7 @@
 @using ClientOrders.Core
 @inject IClientService ClientService
 
+
 <!--<MudText Typo="Typo.h4" Class="mb-4">Clients</MudText>-->
 
 <!--
@@ -73,7 +74,7 @@ Create Client
 
 <RowTemplate>
         <MudTd style="cursor:pointer"
-               @onclick="@(() => Nav.NavigateTo($"clients/edit/{context.Id}"))">
+               @onclick="@(() => Nav.NavigateTo($"clients/{context.Id}"))">
         <MudTooltip>
             <ChildContent>
                

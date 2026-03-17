@@ -1,8 +1,9 @@
-﻿using ClientOrders.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using ClientOrders.Core;
+using ClientOrders.Infrastructure;
+using ClientOrders.Infrastructure.Services;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
-using ClientOrders.Core;
 
 
 
@@ -20,7 +21,8 @@ builder.Services.AddScoped<IFileStorageService>(sp =>
     return new FileStorageService(env.WebRootPath);
 });
 
-builder.Services.AddScoped<IClientService, IClientService>();
+
+builder.Services.AddScoped<IClientService, ClientService>();
 // ✅ Register AppDbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(

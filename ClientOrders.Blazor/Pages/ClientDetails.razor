@@ -1,0 +1,52 @@
+﻿@page "/clients/{id:int}"
+@inject IClientService ClientService
+@inject NavigationManager Nav
+
+<MudButton Variant="Variant.Text"
+           StartIcon="@Icons.Material.Filled.ArrowBack"
+           OnClick="@(()=> Nav.NavigateTo("/clients"))">
+    Back
+</MudButton>
+
+@if (client == null)
+{
+    <MudText>Loading...</MudText>
+}
+else
+{
+    <MudText Typo="Typo.h4">@client.Name</MudText>
+
+    <MudText Typo="Typo.body1" Class="mb-2">
+        @client.Description
+    </MudText>
+
+    <MudText Typo="Typo.subtitle1">
+        Orders: @client.Orders.Count
+    </MudText>
+
+    <MudDivider Class="my-2" />
+
+    <MudTable Items="client.Orders">
+        <HeaderContent>
+            <MudTh>Id</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+
+        <RowTemplate>
+            <MudTd>@context.Id</MudTd>
+            <MudTd>@context.CreatedAt.ToShortDateString()</MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+@code {
+    [Parameter] public int id { get; set; }
+
+    private Client? client;
+
+    protected override void OnInitialized()
+    {
+        client = ClientService
+            .GetClients()
+            .FirstOrDefault(c => c.Id == id);
+    }
+}
