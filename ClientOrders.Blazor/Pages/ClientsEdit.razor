@@ -6,6 +6,7 @@
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IOrderService OrderService
 
 
 <h3>ClientsEdit</h3>
@@ -204,16 +205,22 @@ else
             imageUrl = $"/uploads/orders/{fileName}";
 
         }
-        client.Orders.Add(new Order
-            {
-                Title = newOrderTitle,
-                Description = newOrderDescription,
-            //ImageUrl = newOrderImageUrl,
-                ImageUrl = imageUrl,
-                CreatedAt = DateTime.Now
-            });
+        /*client.Orders.Add(new Order
+        {
+            Title = newOrderTitle,
+                     Description = newOrderDescription,
+                 //ImageUrl = newOrderImageUrl,
+                     ImageUrl = imageUrl,
+                     CreatedAt = DateTime.Now
+                 });
 
-        await Context.SaveChangesAsync();
+        await Context.SaveChangesAsync(); */
+        await OrderService.AddOrderAsync(
+                client,
+                newOrderTitle,
+                newOrderDescription,
+                imageUrl
+                );
 
         uploadedImage = null;
         newOrderTitle = string.Empty;
@@ -268,4 +275,6 @@ else
         await Context.SaveChangesAsync();
         Snackbar.Add("Order deleted", Severity.Info);
     }
+
+
 }

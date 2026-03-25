@@ -20,7 +20,7 @@ builder.Services.AddScoped<IFileStorageService>(sp =>
     var env = sp.GetRequiredService<IWebHostEnvironment>();
     return new FileStorageService(env.WebRootPath);
 });
-
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<IClientService, ClientService>();
 // ✅ Register AppDbContext
