@@ -20,5 +20,15 @@ namespace ClientOrders.Infrastructure.Services
                 .Include (c => c.Orders)
                 .ToList ();
         }
+        public async Task<Client?> GetClientByAsync(int id)
+        {
+            return await _context.Clients
+                .Include(c => c.Orders)
+                .FirstOrDefaultAsync(c => c.Id == id);
+        }
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

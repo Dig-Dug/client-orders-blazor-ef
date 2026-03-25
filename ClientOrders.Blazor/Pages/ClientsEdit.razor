@@ -1,13 +1,14 @@
 ﻿@page "/clients/edit/{Id:int}"
 @using ClientOrders.Core
 @using ClientOrders.Infrastructure
-@inject AppDbContext Context
+
 @inject NavigationManager Nav
 
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IOrderService OrderService
-
+@inject IClientService ClientService
+@inject IOrderService OrderService
 
 <h3>ClientsEdit</h3>
 
@@ -133,10 +134,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        //client = await Context.Clients.FindAsync(Id);
-        client = await Context.Clients
-        .Include(c => c.Orders)
-        .FirstOrDefaultAsync(c => c.Id == Id);
+            //client = await Context.Clients.FindAsync(Id);
+            /*client = await Context.Clients
+            .Include(c => c.Orders)
+            .FirstOrDefaultAsync(c => c.Id == Id);*/
+    client = await ClientService.GetClientByIdAsync(Id);
     }
     private async Task Save()
     {
@@ -173,7 +175,8 @@ else
             }
             client!.ImageUrl = $"/uploads/clients/{fileName}";
         }
-        await Context.SaveChangesAsync();
+        //await Context.SaveChangesAsync();
+        await ClientService.SaveChangesAsync();
         Snackbar.Add("Client saved", Severity.Success);
         Nav.NavigateTo("/clients");
     }
@@ -215,12 +218,12 @@ else
                  });
 
         await Context.SaveChangesAsync(); */
-        await OrderService.AddOrderAsync(
-                client,
-                newOrderTitle,
-                newOrderDescription,
-                imageUrl
-                );
+                        await OrderService.AddOrderAsync(
+                                client,
+                                newOrderTitle,
+                                newOrderDescription,
+                                imageUrl
+                                );
 
         uploadedImage = null;
         newOrderTitle = string.Empty;
@@ -251,8 +254,8 @@ else
         client?.Orders.Remove(order);
         Context.Orders.Remove(order);
         await Context.SaveChangesAsync();
-    Snackbar.Add("Order deleted", Severity.Info);
-    }
+        Snackbar.Add("Order deleted", Severity.Info);
+        }
    */
     private async Task ConfirmDeleteOrder(Order order)
     {
@@ -271,8 +274,10 @@ else
             return;
 
         client?.Orders.Remove(order);
-        Context.Orders.Remove(order);
-        await Context.SaveChangesAsync();
+        /*Context.Orders.Remove(order);
+        await Context.SaveChangesAsync();*/
+                            client?.Orders.Remove(order);
+        await ClientService.SaveChangesAsync();
         Snackbar.Add("Order deleted", Severity.Info);
     }
 

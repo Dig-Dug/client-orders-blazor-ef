@@ -10,5 +10,7 @@ namespace ClientOrders.Core
     public interface IClientService
     {
         List<Client> GetClients();
+        Task<Client> GetClientByIdAsync(int id);
+        Task SaveChangesAsync();
     }
 }
